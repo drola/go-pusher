@@ -136,7 +136,7 @@ func NewCustomClient(appKey, host, scheme string) (*Client, error) {
 	case "pusher:connection_established":
 		sChannels := new(subscribedChannels)
 		sChannels.channels = make([]string, 0)
-		pClient := Client{ws, make(chan *Event, EVENT_CHANNEL_BUFF_SIZE), make(chan bool), sChannels, make(map[string]chan *Event), make(chan *error)}
+		pClient := Client{ws, make(chan *Event, EVENT_CHANNEL_BUFF_SIZE), make(chan bool), sChannels, make(map[string]chan *Event), make(chan error)}
 		go pClient.heartbeat()
 		go pClient.listen()
 		return &pClient, nil
