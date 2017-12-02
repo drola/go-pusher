@@ -16,6 +16,7 @@ type Client struct {
 	Stop               chan bool
 	subscribedChannels *subscribedChannels
 	binders            map[string]chan *Event
+	Errors             chan *error
 }
 
 // heartbeat send a ping frame to server each - TODO reconnect on disconnect
@@ -37,6 +38,7 @@ func (c *Client) listen() {
 				// closed by other goroutine)
 				return
 			}
+                        c.Errors <- &err
 			log.Println("Listen error : ", err)
 		} else {
 			//log.Println(event)
@@ -134,7 +136,7 @@ func NewCustomClient(appKey, host, scheme string) (*Client, error) {
 	case "pusher:connection_established":
 		sChannels := new(subscribedChannels)
 		sChannels.channels = make([]string, 0)
-		pClient := Client{ws, make(chan *Event, EVENT_CHANNEL_BUFF_SIZE), make(chan bool), sChannels, make(map[string]chan *Event)}
+		pClient := Client{ws, make(chan *Event, EVENT_CHANNEL_BUFF_SIZE), make(chan bool), sChannels, make(map[string]chan *Event), make(chan *error)}
 		go pClient.heartbeat()
 		go pClient.listen()
 		return &pClient, nil
