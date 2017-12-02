@@ -16,7 +16,7 @@ type Client struct {
 	Stop               chan bool
 	subscribedChannels *subscribedChannels
 	binders            map[string]chan *Event
-	Errors             chan *error
+	Errors             chan error
 }
 
 // heartbeat send a ping frame to server each - TODO reconnect on disconnect
@@ -38,7 +38,7 @@ func (c *Client) listen() {
 				// closed by other goroutine)
 				return
 			}
-                        c.Errors <- &err
+                        c.Errors <- err
 			log.Println("Listen error : ", err)
 		} else {
 			//log.Println(event)
